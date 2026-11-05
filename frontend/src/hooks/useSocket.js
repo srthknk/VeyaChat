@@ -123,6 +123,12 @@ export const useSocket = (token, currentUser) => {
       }
     });
 
+    socket.on(SOCKET_EVENTS.MESSAGE_SENT, ({ clientMessageId, message }) => {
+      if (clientMessageId && message) {
+        updateMessage(clientMessageId, { ...message, pending: false });
+      }
+    });
+
     socket.on(SOCKET_EVENTS.MESSAGE_DELIVERED, ({ messageId }) => {
       updateMessage(messageId, { delivered: true });
     });
@@ -165,6 +171,7 @@ export const useSocket = (token, currentUser) => {
         SOCKET_EVENTS.DRAFT_CLEAR,
         SOCKET_EVENTS.DRAFT_STOP,
         SOCKET_EVENTS.MESSAGE_RECEIVE,
+        SOCKET_EVENTS.MESSAGE_SENT,
         SOCKET_EVENTS.MESSAGE_DELIVERED,
         SOCKET_EVENTS.MESSAGE_SEEN,
         SOCKET_EVENTS.CHAT_SEEN,

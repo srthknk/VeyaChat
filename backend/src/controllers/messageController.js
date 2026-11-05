@@ -7,7 +7,7 @@ import cloudinary from '../config/cloudinary.js';
 export const sendMessage = async (req, res, next) => {
   try {
     const userId = req.userId;
-    const { receiverId, content, messageType, mediaUrl } = req.body;
+    const { receiverId, content, messageType, mediaUrl, clientMessageId } = req.body;
 
     // Get or create chat
     const chat = await ChatService.getOrCreateChat(userId, receiverId);
@@ -54,6 +54,11 @@ export const sendMessage = async (req, res, next) => {
       });
       message.delivered = deliveredMessage.delivered;
     }
+
+    io.to(`user:${userId}`).emit(SOCKET_EVENTS.MESSAGE_SENT, {
+      clientMessageId,
+      message,
+    });
 
     res.status(201).json({
       success: true,

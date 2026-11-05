@@ -173,6 +173,7 @@ export default function ChatPage() {
         content: payload.content,
         messageType: payload.messageType,
         mediaUrl: payload.mediaUrl || null,
+        clientMessageId: temporaryId,
       });
 
       updateMessage(temporaryId, {

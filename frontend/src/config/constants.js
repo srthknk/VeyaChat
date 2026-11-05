@@ -17,6 +17,7 @@ export const SOCKET_EVENTS = {
   
   // Messaging
   MESSAGE_SEND: 'messageSend',
+  MESSAGE_SENT: 'messageSent',
   MESSAGE_RECEIVE: 'messageReceive',
   MESSAGE_DELIVERED: 'messageDelivered',
   MESSAGE_SEEN: 'messageSeen',
