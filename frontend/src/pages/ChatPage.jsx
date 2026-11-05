@@ -30,10 +30,11 @@ export default function ChatPage() {
   const otherDisplayName = [otherUser?.firstName, otherUser?.lastName].filter(Boolean).join(' ') || otherUser?.username;
   const draftText = otherUser ? (drafts[chatId]?.[otherUser._id] || '') : '';
   const isTyping = !!draftText || !!typingUsers[chatId]?.[otherUser?._id];
+  const chatMessages = storeMessages.filter((message) => String(message.chatId?._id || message.chatId) === String(chatId));
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
-  }, [storeMessages.length, isTyping]);
+  }, [chatMessages.length, isTyping]);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -120,6 +121,7 @@ export default function ChatPage() {
 
     useChatStore.setState((state) => ({
       messages: state.messages.map((message) => (
+        String(message.chatId?._id || message.chatId) === String(chatId) &&
         String(message.receiverId?._id || message.receiverId) === currentUserId
           ? { ...message, seen: true }
           : message
@@ -185,7 +187,9 @@ export default function ChatPage() {
 
   const handleClearChat = async () => {
     await chatService.clearChat(chatId);
-    useChatStore.setState({ messages: [] });
+    useChatStore.setState((state) => ({
+      messages: state.messages.filter((message) => String(message.chatId?._id || message.chatId) !== String(chatId)),
+    }));
     setChatMenuOpen(false);
     setChat((current) => ({ ...current, lastMessage: null, lastMessageTime: null }));
   };
@@ -258,14 +262,14 @@ export default function ChatPage() {
           <div className="chat-messages min-h-0 flex-1 space-y-2 overflow-y-auto overscroll-contain px-2 py-3 sm:space-y-3 sm:p-5">
             {loading ? (
               <div className="text-center text-textSecondary">Loading messages...</div>
-            ) : storeMessages.length === 0 ? (
+            ) : chatMessages.length === 0 ? (
               <div className="text-center text-textSecondary">No messages yet. Start chatting!</div>
             ) : (
-              storeMessages.map((msg) => (
+              chatMessages.map((msg) => (
                 <MessageItem
                   key={msg._id}
                   message={msg}
-                  isOwn={msg.senderId._id === currentUser._id}
+                  isOwn={String(msg.senderId?._id || msg.senderId) === String(currentUser._id)}
                 />
               ))
             )}
