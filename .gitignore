@@ -2,6 +2,7 @@
 backend/node_modules/
 backend/.env
 backend/.env.local
+backend/.env.render
 backend/dist/
 backend/.DS_Store
 backend/*.log
