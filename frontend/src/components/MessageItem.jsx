@@ -40,7 +40,7 @@ export default function MessageItem({ message, isOwn }) {
         )}
         <p className={`mt-1 text-xs ${isOwn ? 'text-green-100' : 'text-textSecondary'}`}>
           {formatTime(message.createdAt)}
-          {isOwn && (message.pending ? ' · Sending' : message.seen ? ' ✓✓' : message.delivered ? ' ✓' : '')}
+          {isOwn && (message.pending ? ' · Sending' : message.seen ? ' ✓✓' : ' ✓')}
         </p>
       </div>
       {viewerOpen && (message.messageType === 'image' || message.messageType === 'video') && (
