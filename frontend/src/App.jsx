@@ -20,6 +20,7 @@ import NotFoundPage from './pages/NotFoundPage.jsx';
 import NotificationCenter from './components/NotificationCenter.jsx';
 import LocationConsent from './components/LocationConsent.jsx';
 import GoogleRegisterPage from './pages/GoogleRegisterPage.jsx';
+import PrivacyPage from './pages/PrivacyPage.jsx';
 
 const queryClient = new QueryClient();
 
@@ -70,6 +71,7 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/register/google" element={<GoogleRegisterPage />} />
+          <Route path="/privacy" element={<PrivacyPage />} />
 
           {/* Protected Routes */}
           <Route

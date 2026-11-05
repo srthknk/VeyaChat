@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -8,6 +10,11 @@
 
 html {
   scroll-behavior: smooth;
+}
+
+html,
+body {
+  transition: background-color 700ms ease, color 700ms ease;
 }
 
 body {
@@ -168,6 +175,95 @@ html.dark .chat-messages {
   background-attachment: local;
 }
 
+.landing-page {
+  position: relative;
+  isolation: isolate;
+  background-color: #080716;
+  background-image: linear-gradient(rgba(8, 7, 22, 0.28), rgba(8, 7, 22, 0.28)), var(--landing-background);
+  background-position: center;
+  background-size: cover;
+}
+
+.landing-page::before {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(circle at 50% 20%, rgba(116, 72, 220, 0.12), transparent 38%);
+  content: '';
+}
+
+.landing-light {
+  background-color: #f5f4fc;
+  background-image: linear-gradient(rgba(245, 244, 252, 0.12), rgba(245, 244, 252, 0.12)), var(--landing-background);
+}
+
+.landing-light .landing-feature {
+  background: rgba(255, 255, 255, 0.72);
+  border-color: rgba(47, 42, 91, 0.12);
+}
+
+.landing-dark .landing-feature {
+  background: rgba(12, 10, 34, 0.72);
+}
+
+.premium-attribution {
+  font-family: 'DM Serif Display', Georgia, serif;
+  letter-spacing: 0.01em;
+  color: #64748b;
+  transition: color 700ms ease;
+}
+
+.premium-attribution span {
+  color: #6337cc;
+  transition: color 700ms ease;
+}
+
+.landing-credit {
+  color: rgba(17, 21, 45, 0.72);
+  transition: color 700ms ease;
+}
+
+.landing-credit span {
+  color: #6337cc;
+  transition: color 700ms ease;
+}
+
+.landing-dark .landing-credit {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.landing-dark .landing-credit span {
+  color: #b394ff;
+}
+
+html.dark .premium-attribution {
+  color: #a7b2bd;
+}
+
+html.dark .premium-attribution span {
+  color: #b394ff;
+}
+
+.landing-light .text-\[\#a88cff\] {
+  color: #6337cc;
+}
+
+@media (max-width: 420px) {
+  .landing-page {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .landing-page header nav {
+    gap: 0.35rem;
+  }
+
+  .landing-page header nav a,
+  .landing-page header nav button {
+    white-space: nowrap;
+  }
+}
+
 @media (max-width: 640px) {
   body {
     overflow-x: hidden;
@@ -189,5 +285,9 @@ html.dark .chat-messages {
 
   .chat-messages {
     overscroll-behavior: contain;
+  }
+
+  .premium-attribution {
+    line-height: 1.4;
   }
 }

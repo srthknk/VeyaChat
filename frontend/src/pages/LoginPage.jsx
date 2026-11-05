@@ -9,6 +9,7 @@ import VeyaLogo from '../components/VeyaLogo.jsx';
 import { authService } from '../services/index.js';
 import { useAuthStore } from '../store/index.js';
 import GoogleAuthButton from '../components/GoogleAuthButton.jsx';
+import Attribution from '../components/Attribution.jsx';
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -46,7 +47,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background lg:grid lg:grid-cols-[minmax(0,1.05fr)_minmax(420px,0.95fr)]">
+    <div className="min-h-[100dvh] bg-background lg:grid lg:grid-cols-[minmax(0,1.05fr)_minmax(420px,0.95fr)]">
       <section className="hidden min-h-screen bg-[#111b21] px-12 py-14 text-white lg:flex lg:flex-col lg:justify-between">
         <VeyaLogo />
         <div className="max-w-lg">
@@ -57,13 +58,16 @@ export default function LoginPage() {
             {['Fast messaging', 'Private profiles', 'Works everywhere'].map((feature) => <div key={feature} className="rounded-xl border border-[#374045] bg-[#202c33] p-4 text-sm font-semibold">{feature}</div>)}
           </div>
         </div>
-        <p className="text-sm text-[#8696a0]">Veya · real-time messaging</p>
+        <Attribution className="text-sm text-[#8696a0]" />
       </section>
-      <section className="flex min-h-screen items-center justify-center px-5 py-10 sm:px-10">
+      <section className="flex min-h-[100dvh] items-center justify-center px-4 py-8 sm:px-10 sm:py-10">
         <div className="w-full max-w-md">
+          <Link to="/" className="mb-5 inline-flex items-center rounded-xl border border-gray-300 px-3 py-2 text-sm font-semibold text-textSecondary transition hover:border-primary hover:text-primary">
+            Home
+          </Link>
           <div className="mb-8 lg:hidden"><VeyaLogo /></div>
           <div className="mb-8">
-            <h2 className="text-3xl font-bold text-textPrimary">Sign in</h2>
+            <h2 className="text-2xl font-bold text-textPrimary sm:text-3xl">Sign in</h2>
             <p className="mt-2 text-textSecondary">Continue to your conversations.</p>
           </div>
           {error && <div className="mb-5 rounded-lg border border-danger bg-danger bg-opacity-10 p-3 text-sm text-danger">{error}</div>}
@@ -83,6 +87,7 @@ export default function LoginPage() {
           <div className="my-5 flex items-center gap-3 text-xs text-textSecondary"><span className="h-px flex-1 bg-gray-300" />OR<span className="h-px flex-1 bg-gray-300" /></div>
           <GoogleAuthButton onCredential={handleGoogleLogin} />
           <p className="mt-7 text-center text-sm text-textSecondary">New to Veya? <Link to="/register" className="font-bold text-primary hover:underline">Create an account</Link></p>
+          <Attribution className="mt-8 text-center text-sm lg:hidden" />
         </div>
       </section>
     </div>

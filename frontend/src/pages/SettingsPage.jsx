@@ -4,6 +4,7 @@ import Header from '../components/Header.jsx';
 import { chatService, userService } from '../services/index.js';
 import { useAuth } from '../hooks/useAuth.js';
 import { isStandalonePwa, requestNativeNotificationPermission } from '../services/notifications.js';
+import Attribution from '../components/Attribution.jsx';
 
 export default function SettingsPage() {
   const { user, setUser } = useAuth();
@@ -94,10 +95,10 @@ export default function SettingsPage() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="max-w-2xl mx-auto p-6"
+        className="mx-auto max-w-2xl p-4 sm:p-6"
       >
-        <div className="bg-white rounded-lg shadow-lg p-8">
-          <h1 className="text-3xl font-bold mb-8 text-textPrimary">Settings</h1>
+        <div className="rounded-lg bg-white p-5 shadow-lg sm:p-8">
+          <h1 className="mb-6 text-2xl font-bold text-textPrimary sm:mb-8 sm:text-3xl">Settings</h1>
 
           <div className="mb-8 border-b pb-8">
             <h3 className="mb-2 text-lg font-semibold text-textPrimary">Personal details</h3>
@@ -170,9 +171,7 @@ export default function SettingsPage() {
           <button onClick={saveSettings} disabled={!hasChanges || saving} className="mt-8 w-full rounded-lg bg-gray-200 py-2 font-bold text-textPrimary transition hover:bg-gray-300 disabled:cursor-not-allowed disabled:opacity-50">
             {saving ? 'Saving settings...' : 'Save Settings'}
           </button>
-          <p className="mt-6 text-center text-sm text-textSecondary">
-            Designed and developed by Sarthak Nitin Kulkarni
-          </p>
+          <Attribution className="mt-6 text-center text-sm" />
         </div>
       </motion.div>
     </div>
