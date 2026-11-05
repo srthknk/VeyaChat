@@ -1,0 +1,193 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  @apply box-border;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-background text-textPrimary;
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  background-image: linear-gradient(rgba(239, 234, 226, 0.96), rgba(239, 234, 226, 0.96)),
+    radial-gradient(#d9d2c8 0.8px, transparent 0.8px);
+  background-size: auto, 14px 14px;
+}
+
+button,
+input,
+textarea,
+a {
+  transition: color 180ms ease, background-color 180ms ease, border-color 180ms ease, opacity 180ms ease, transform 180ms ease;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+
+html.dark body {
+  background-color: #111b21;
+  background-image: linear-gradient(rgba(17, 27, 33, 0.96), rgba(17, 27, 33, 0.96)),
+    radial-gradient(#26343b 0.8px, transparent 0.8px);
+}
+
+html.dark .bg-white,
+html.dark .bg-surface {
+  background-color: #202c33 !important;
+}
+
+html.dark .bg-background {
+  background-color: #111b21 !important;
+}
+
+html.dark .bg-\[\#f0f2f5\] {
+  background-color: #202c33 !important;
+}
+
+html.dark .bg-\[\#e7fce3\] {
+  background-color: #1f3b32 !important;
+}
+
+html.dark .bg-gray-100,
+html.dark .bg-gray-200 {
+  background-color: #2a3942 !important;
+}
+
+html.dark .profile-detail-card {
+  background-color: #2a3942 !important;
+}
+
+html:not(.dark) .profile-detail-card {
+  background-color: #f7f9fa !important;
+}
+
+html.dark .text-textPrimary,
+html.dark .text-black {
+  color: #e9edef !important;
+}
+
+html.dark .text-textSecondary,
+html.dark .text-gray-500,
+html.dark .text-gray-600 {
+  color: #8696a0 !important;
+}
+
+html.dark .border-gray-300,
+html.dark .border-gray-200,
+html.dark .border-\[\#d1d7db\] {
+  border-color: #374045 !important;
+}
+
+html.dark input,
+html.dark textarea {
+  background-color: #2a3942;
+  color: #e9edef;
+  border-color: #374045;
+}
+
+html.dark input::placeholder,
+html.dark textarea::placeholder {
+  color: #8696a0;
+}
+
+html:not(.dark) body {
+  color: #111b21;
+  background-color: #efeae2;
+  background-image: linear-gradient(rgba(239, 234, 226, 0.96), rgba(239, 234, 226, 0.96)),
+    radial-gradient(#d9d2c8 0.8px, transparent 0.8px);
+}
+
+html:not(.dark) .bg-white {
+  background-color: #ffffff !important;
+}
+
+html:not(.dark) .bg-background {
+  background-color: #efeae2 !important;
+}
+
+html:not(.dark) .bg-\[\#f7f9fa\] {
+  background-color: #f7f9fa !important;
+}
+
+html:not(.dark) .bg-\[\#f0f2f5\] {
+  background-color: #f0f2f5 !important;
+}
+
+html:not(.dark) .text-textPrimary {
+  color: #111b21 !important;
+}
+
+html:not(.dark) .text-textSecondary {
+  color: #667781 !important;
+}
+
+html:not(.dark) input,
+html:not(.dark) textarea {
+  background-color: #ffffff;
+  color: #111b21;
+  border-color: #d1d7db;
+}
+
+html:not(.dark) input::placeholder,
+html:not(.dark) textarea::placeholder {
+  color: #667781;
+}
+
+.chat-messages {
+  background-color: #efeae2;
+  background-image: url('./assets/chat-light.jpeg');
+  background-position: center;
+  background-size: cover;
+  background-attachment: local;
+}
+
+html.dark .chat-messages {
+  background-color: #111b21;
+  background-image: url('./assets/chat-dark.jpeg');
+  background-position: center;
+  background-size: cover;
+  background-attachment: local;
+}
+
+@media (max-width: 640px) {
+  body {
+    overflow-x: hidden;
+  }
+
+  button,
+  input,
+  textarea,
+  a {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  input,
+  textarea,
+  select,
+  button {
+    font-size: 16px;
+  }
+
+  .chat-messages {
+    overscroll-behavior: contain;
+  }
+}
