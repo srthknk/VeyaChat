@@ -38,9 +38,9 @@ export default function MessageItem({ message, isOwn }) {
         ) : (
           <p className="text-sm whitespace-pre-wrap break-words">{message.content}</p>
         )}
-        <p className={`text-xs mt-1 ${isOwn ? 'text-green-100' : 'text-textSecondary'}`}>
+        <p className={`mt-1 text-xs ${isOwn ? 'text-green-100' : 'text-textSecondary'}`}>
           {formatTime(message.createdAt)}
-          {isOwn && (message.seen ? ' ✓✓' : message.delivered ? ' ✓' : '')}
+          {isOwn && (message.pending ? ' · Sending' : message.seen ? ' ✓✓' : message.delivered ? ' ✓' : '')}
         </p>
       </div>
       {viewerOpen && (message.messageType === 'image' || message.messageType === 'video') && (

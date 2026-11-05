@@ -269,6 +269,17 @@ html.dark .premium-attribution span {
     overflow-x: hidden;
   }
 
+  .chat-page-shell {
+    /*
+     * Keep the route out of document scrolling while Android resizes the
+     * visual viewport for the keyboard. The message pane is the only
+     * scrollable region, so the recipient header cannot be pushed away.
+     */
+    height: 100dvh;
+    max-height: 100dvh;
+    touch-action: manipulation;
+  }
+
   button,
   input,
   textarea,

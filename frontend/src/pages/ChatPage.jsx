@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Sidebar from '../components/Sidebar.jsx';
@@ -18,17 +18,22 @@ export default function ChatPage() {
   const { chatId } = useParams();
   const navigate = useNavigate();
   const { user: currentUser } = useAuth();
-  const { messages: storeMessages, drafts, typingUsers, chats, addMessage: addStoreMessage, upsertChat, setChats } = useChatStore();
+  const { messages: storeMessages, drafts, typingUsers, chats, addMessage: addStoreMessage, updateMessage, deleteMessage, upsertChat, setChats } = useChatStore();
   const [chat, setChat] = useState(null);
   const [loading, setLoading] = useState(true);
   const [chatMenuOpen, setChatMenuOpen] = useState(false);
   const [callNotice, setCallNotice] = useState('');
+  const messagesEndRef = useRef(null);
 
   // Get draft text for current chat
   const otherUser = chat?.participants.find((p) => p._id !== currentUser?._id);
   const otherDisplayName = [otherUser?.firstName, otherUser?.lastName].filter(Boolean).join(' ') || otherUser?.username;
   const draftText = otherUser ? (drafts[chatId]?.[otherUser._id] || '') : '';
   const isTyping = !!draftText || !!typingUsers[chatId]?.[otherUser?._id];
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  }, [storeMessages.length, isTyping]);
 
   useEffect(() => {
     if (chatId && currentUser) {
@@ -107,6 +112,22 @@ export default function ChatPage() {
       ? { content: message, messageType: 'text' }
       : message;
 
+    const temporaryId = `pending-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    const optimisticMessage = {
+      _id: temporaryId,
+      chatId,
+      senderId: currentUser,
+      receiverId: otherUser,
+      content: payload.content,
+      messageType: payload.messageType,
+      mediaUrl: payload.mediaUrl || null,
+      createdAt: new Date().toISOString(),
+      delivered: false,
+      seen: false,
+      pending: true,
+    };
+    addStoreMessage(optimisticMessage);
+
     try {
       const socket = getSocket();
 
@@ -123,10 +144,10 @@ export default function ChatPage() {
         mediaUrl: payload.mediaUrl || null,
       });
 
-      // Add message to store
-      addStoreMessage(response.data.data.message);
+      updateMessage(temporaryId, response.data.data.message);
     } catch (error) {
       console.error('Failed to send message:', error);
+      deleteMessage(temporaryId);
     }
   };
 
@@ -155,7 +176,7 @@ export default function ChatPage() {
   const sidebarChat = chats.find((item) => item._id === chatId) || chat;
 
   return (
-    <div className="flex h-[100dvh] min-h-0 flex-col overflow-hidden bg-background">
+    <div className="chat-page-shell fixed inset-0 flex h-[100dvh] min-h-0 flex-col overflow-hidden overscroll-none bg-background md:relative md:h-[100dvh]">
       <div className="flex min-h-0 flex-1">
         <Sidebar className="hidden md:block">
           <div className="p-4">
@@ -202,7 +223,7 @@ export default function ChatPage() {
           </div>
 
           {/* Messages Container */}
-          <div className="chat-messages min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain p-3 sm:p-5">
+          <div className="chat-messages min-h-0 flex-1 space-y-2 overflow-y-auto overscroll-contain px-2 py-3 sm:space-y-3 sm:p-5">
             {loading ? (
               <div className="text-center text-textSecondary">Loading messages...</div>
             ) : storeMessages.length === 0 ? (
@@ -216,6 +237,7 @@ export default function ChatPage() {
                 />
               ))
             )}
+            <div ref={messagesEndRef} aria-hidden="true" />
 
             {/* Draft Preview */}
             {isTyping && draftText && (
