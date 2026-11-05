@@ -12,7 +12,13 @@ const client = axios.create({
 
 // Add token to headers
 client.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
+  let storedToken = null;
+  try {
+    storedToken = localStorage.getItem('token');
+  } catch (error) {
+    console.warn('Persistent browser storage is unavailable; using the active session:', error);
+  }
+  const token = storedToken || useAuthStore.getState().token;
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }

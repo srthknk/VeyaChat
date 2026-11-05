@@ -22,6 +22,7 @@ import LocationConsent from './components/LocationConsent.jsx';
 import GoogleRegisterPage from './pages/GoogleRegisterPage.jsx';
 import PrivacyPage from './pages/PrivacyPage.jsx';
 import OfflineNotice from './components/OfflineNotice.jsx';
+import { readPersistedToken } from './services/authStorage.js';
 
 const queryClient = new QueryClient();
 
@@ -54,15 +55,25 @@ function App() {
 
   useEffect(() => {
     let active = true;
-    if (!token) {
-      setAuthReady(true);
-      return () => {
-        active = false;
-      };
-    }
+    const restoreSession = async () => {
+      let restoredToken = token;
+      if (!restoredToken) {
+        try {
+          restoredToken = await readPersistedToken();
+          if (restoredToken && active) {
+            useAuthStore.getState().setToken(restoredToken);
+          }
+        } catch (error) {
+          console.error('Failed to read the persisted Veya session:', error);
+        }
+      }
 
-    authService
-      .getMe()
+      if (!restoredToken) {
+        if (active) setAuthReady(true);
+        return;
+      }
+
+      authService.getMe()
       .then((response) => {
         if (active) setUser(response.data.data.user);
       })
@@ -75,7 +86,9 @@ function App() {
       .finally(() => {
         if (active) setAuthReady(true);
       });
+    };
 
+    restoreSession();
     return () => {
       active = false;
     };

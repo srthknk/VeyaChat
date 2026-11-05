@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { clearPersistedToken, persistToken } from '../services/authStorage.js';
 
 const readStoredValue = (key) => {
   try {
@@ -42,6 +43,15 @@ export const useAuthStore = create((set) => ({
   },
   setToken: (token) => {
     writeStoredValue('token', token);
+    if (token) {
+      persistToken(token).catch((error) => {
+        console.error('Unable to persist the Veya session:', error);
+      });
+    } else {
+      clearPersistedToken().catch((error) => {
+        console.error('Unable to clear the Veya session:', error);
+      });
+    }
     if (token && navigator.storage?.persist) {
       navigator.storage.persist().catch((error) => {
         console.warn('Persistent browser storage was not granted:', error);
@@ -55,6 +65,9 @@ export const useAuthStore = create((set) => ({
   logout: () => {
     writeStoredValue('token', null);
     writeStoredValue('user', null);
+    clearPersistedToken().catch((error) => {
+      console.error('Unable to clear the Veya session:', error);
+    });
     set({ user: null, token: null });
   },
 }));
