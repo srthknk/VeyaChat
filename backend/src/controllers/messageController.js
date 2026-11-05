@@ -46,6 +46,15 @@ export const sendMessage = async (req, res, next) => {
       seen: message.seen,
     });
 
+    // The recipient is connected and has received the message event.
+    if ((io.sockets.adapter.rooms.get(receiverRoom)?.size || 0) > 0) {
+      const deliveredMessage = await MessageService.markMessageDelivered(message._id);
+      io.to(`user:${userId}`).emit(SOCKET_EVENTS.MESSAGE_DELIVERED, {
+        messageId: message._id,
+      });
+      message.delivered = deliveredMessage.delivered;
+    }
+
     res.status(201).json({
       success: true,
       message: 'Message sent successfully',

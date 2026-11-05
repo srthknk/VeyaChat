@@ -135,8 +135,8 @@ export const setupSocketHandlers = (io, socket) => {
   socket.on(SOCKET_EVENTS.MESSAGE_DELIVERED, async ({ messageId, receiverId }) => {
     try {
       await MessageService.markMessageDelivered(messageId);
-      const receiverRoom = `user:${receiverId}`;
-      io.to(receiverRoom).emit(SOCKET_EVENTS.MESSAGE_DELIVERED, { messageId });
+      const senderRoom = `user:${receiverId}`;
+      io.to(senderRoom).emit(SOCKET_EVENTS.MESSAGE_DELIVERED, { messageId });
     } catch (error) {
       console.error('Delivery error:', error);
     }

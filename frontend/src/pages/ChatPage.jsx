@@ -173,7 +173,10 @@ export default function ChatPage() {
         mediaUrl: payload.mediaUrl || null,
       });
 
-      updateMessage(temporaryId, response.data.data.message);
+      updateMessage(temporaryId, {
+        ...response.data.data.message,
+        pending: false,
+      });
     } catch (error) {
       console.error('Failed to send message:', error);
       deleteMessage(temporaryId);
