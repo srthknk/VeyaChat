@@ -107,7 +107,7 @@ export default function MessageInput({ onSend, disabled, chatId, receiverId }) {
   };
 
   return (
-    <div className="relative flex items-end gap-1.5 border-t border-[#d1d7db] bg-white p-2 dark:border-[#374045] dark:bg-[#202c33] sm:gap-3 sm:p-4">
+    <div className="relative flex items-end gap-1.5 border-t border-[#d1d7db] bg-white p-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))] dark:border-[#374045] dark:bg-[#202c33] sm:gap-3 sm:p-4">
       {emojiOpen && (
         <div className="absolute bottom-20 right-16 z-20 grid grid-cols-8 gap-1 rounded-xl border border-gray-200 bg-white p-3 shadow-xl dark:border-[#374045] dark:bg-[#202c33] sm:right-24">
           {emojis.map((emoji) => (

@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import Header from '../components/Header.jsx';
 import Sidebar from '../components/Sidebar.jsx';
 import MessageItem from '../components/MessageItem.jsx';
 import MessageInput from '../components/MessageInput.jsx';
@@ -156,9 +155,8 @@ export default function ChatPage() {
   const sidebarChat = chats.find((item) => item._id === chatId) || chat;
 
   return (
-    <div className="h-screen overflow-hidden bg-background flex flex-col">
-      <Header />
-      <div className="flex flex-1 min-h-0">
+    <div className="flex h-[100dvh] min-h-0 flex-col overflow-hidden bg-background">
+      <div className="flex min-h-0 flex-1">
         <Sidebar className="hidden md:block">
           <div className="p-4">
             <h3 className="mb-3 text-xl font-bold text-textPrimary">Messages</h3>
@@ -247,7 +245,7 @@ export default function ChatPage() {
           </div>
 
           {/* Message Input */}
-          <div className="shrink-0">
+          <div className="chat-composer shrink-0">
             <MessageInput onSend={handleSendMessage} disabled={!chat} chatId={chatId} receiverId={otherUser?._id} />
           </div>
         </main>

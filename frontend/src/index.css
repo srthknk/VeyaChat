@@ -287,6 +287,12 @@ html.dark .premium-attribution span {
     overscroll-behavior: contain;
   }
 
+  .chat-composer {
+    position: relative;
+    z-index: 20;
+    flex-shrink: 0;
+  }
+
   .premium-attribution {
     line-height: 1.4;
   }
