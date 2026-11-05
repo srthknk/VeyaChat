@@ -1,39 +1,60 @@
 import { create } from 'zustand';
 
+const readStoredValue = (key) => {
+  try {
+    return localStorage.getItem(key);
+  } catch (error) {
+    console.error(`Unable to read persistent auth storage for ${key}:`, error);
+    return null;
+  }
+};
+
+const writeStoredValue = (key, value) => {
+  try {
+    if (value === null) {
+      localStorage.removeItem(key);
+    } else {
+      localStorage.setItem(key, value);
+    }
+  } catch (error) {
+    console.error(`Unable to write persistent auth storage for ${key}:`, error);
+  }
+};
+
 export const useAuthStore = create((set) => ({
   user: (() => {
     try {
-      const stored = localStorage.getItem('user');
+      const stored = readStoredValue('user');
       return stored ? JSON.parse(stored) : null;
-    } catch {
+    } catch (error) {
+      console.error('Unable to restore the persisted user:', error);
       return null;
     }
   })(),
-  token: localStorage.getItem('token') || null,
+  token: readStoredValue('token') || null,
+  authReady: false,
   isLoading: false,
   error: null,
 
   setUser: (user) => {
-    if (user) {
-      localStorage.setItem('user', JSON.stringify(user));
-    } else {
-      localStorage.removeItem('user');
-    }
+    writeStoredValue('user', user ? JSON.stringify(user) : null);
     set({ user });
   },
   setToken: (token) => {
-    if (token) {
-      localStorage.setItem('token', token);
-    } else {
-      localStorage.removeItem('token');
+    writeStoredValue('token', token);
+    if (token && navigator.storage?.persist) {
+      navigator.storage.persist().catch((error) => {
+        console.warn('Persistent browser storage was not granted:', error);
+      });
     }
     set({ token });
   },
+  setAuthReady: (authReady) => set({ authReady }),
   setLoading: (isLoading) => set({ isLoading }),
   setError: (error) => set({ error }),
   logout: () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    writeStoredValue('token', null);
+    writeStoredValue('user', null);
     set({ user: null, token: null });
   },
 }));

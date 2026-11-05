@@ -36,6 +36,35 @@ export default function ChatPage() {
   }, [storeMessages.length, isTyping]);
 
   useEffect(() => {
+    const root = document.documentElement;
+    const body = document.body;
+    const visualViewport = window.visualViewport;
+
+    const updateViewport = () => {
+      const height = visualViewport?.height || window.innerHeight;
+      const offsetTop = visualViewport?.offsetTop || 0;
+      root.style.setProperty('--chat-viewport-height', `${height}px`);
+      root.style.setProperty('--chat-viewport-top', `${offsetTop}px`);
+    };
+
+    updateViewport();
+    root.classList.add('chat-route-active');
+    visualViewport?.addEventListener('resize', updateViewport);
+    visualViewport?.addEventListener('scroll', updateViewport);
+    window.addEventListener('resize', updateViewport);
+
+    return () => {
+      root.classList.remove('chat-route-active');
+      root.style.removeProperty('--chat-viewport-height');
+      root.style.removeProperty('--chat-viewport-top');
+      visualViewport?.removeEventListener('resize', updateViewport);
+      visualViewport?.removeEventListener('scroll', updateViewport);
+      window.removeEventListener('resize', updateViewport);
+      body.scrollTop = 0;
+    };
+  }, []);
+
+  useEffect(() => {
     if (chatId && currentUser) {
       loadChat();
       loadMessages();
@@ -176,7 +205,7 @@ export default function ChatPage() {
   const sidebarChat = chats.find((item) => item._id === chatId) || chat;
 
   return (
-    <div className="chat-page-shell fixed inset-0 flex h-[100dvh] min-h-0 flex-col overflow-hidden overscroll-none bg-background md:relative md:h-[100dvh]">
+    <div className="chat-page-shell fixed inset-x-0 top-0 flex min-h-0 flex-col overflow-hidden overscroll-none bg-background md:relative md:h-[100dvh]">
       <div className="flex min-h-0 flex-1">
         <Sidebar className="hidden md:block">
           <div className="p-4">

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -31,7 +31,7 @@ export default function LoginPage() {
     }
   };
 
-  const handleGoogleLogin = async (credential) => {
+  const handleGoogleLogin = useCallback(async (credential) => {
     try {
       const response = await authService.googleLogin(credential);
       setUser(response.data.data.user);
@@ -44,7 +44,7 @@ export default function LoginPage() {
       }
       console.error('Google login failed:', requestError);
     }
-  };
+  }, [navigate, setToken, setUser]);
 
   return (
     <div className="min-h-[100dvh] bg-background lg:grid lg:grid-cols-[minmax(0,1.05fr)_minmax(420px,0.95fr)]">

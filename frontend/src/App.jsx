@@ -21,11 +21,22 @@ import NotificationCenter from './components/NotificationCenter.jsx';
 import LocationConsent from './components/LocationConsent.jsx';
 import GoogleRegisterPage from './pages/GoogleRegisterPage.jsx';
 import PrivacyPage from './pages/PrivacyPage.jsx';
+import OfflineNotice from './components/OfflineNotice.jsx';
 
 const queryClient = new QueryClient();
 
 // Protected Route Component
-const ProtectedRoute = ({ children, isAuthenticated }) => {
+const AuthLoadingScreen = () => (
+  <div className="flex min-h-[100dvh] items-center justify-center bg-background px-6 text-center">
+    <div>
+      <div className="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border-4 border-gray-200 border-t-primary" />
+      <p className="text-sm text-textSecondary">Restoring your Veya session...</p>
+    </div>
+  </div>
+);
+
+const ProtectedRoute = ({ children, isAuthenticated, authReady }) => {
+  if (!authReady) return <AuthLoadingScreen />;
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
@@ -34,35 +45,50 @@ const ProtectedRoute = ({ children, isAuthenticated }) => {
 
 function App() {
   const { isAuthenticated, token } = useAuth();
-  const { user, setUser } = useAuthStore();
+  const { user, setUser, authReady, setAuthReady } = useAuthStore();
   useSocket(token, user);
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', localStorage.getItem('incognitoTheme') === 'dark');
   }, []);
 
-  // Restore user from token on app load
   useEffect(() => {
-    if (token && !user) {
-      authService
-        .getMe()
-        .then((response) => {
-          setUser(response.data.data.user);
-        })
-        .catch((error) => {
-          console.error('Failed to restore user:', error);
-          // Only clear persisted auth when the server confirms the token is invalid.
-          if (error.response?.status === 401) {
-            useAuthStore.getState().setToken(null);
-            useAuthStore.getState().setUser(null);
-          }
-        });
+    let active = true;
+    if (!token) {
+      setAuthReady(true);
+      return () => {
+        active = false;
+      };
     }
-  }, [token]);
+
+    authService
+      .getMe()
+      .then((response) => {
+        if (active) setUser(response.data.data.user);
+      })
+      .catch((error) => {
+        console.error('Failed to restore user:', error);
+        if (active && error.response?.status === 401) {
+          useAuthStore.getState().logout();
+        }
+      })
+      .finally(() => {
+        if (active) setAuthReady(true);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [token, setUser, setAuthReady]);
+
+  if (!authReady) {
+    return <AuthLoadingScreen />;
+  }
 
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
+        <OfflineNotice />
         <NotificationCenter />
         <LocationConsent user={user} />
         <Routes>
@@ -77,7 +103,7 @@ function App() {
           <Route
             path="/home"
             element={
-              <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <ProtectedRoute isAuthenticated={isAuthenticated} authReady={authReady}>
                 <HomePage />
               </ProtectedRoute>
             }
@@ -85,7 +111,7 @@ function App() {
           <Route
             path="/chat/:chatId"
             element={
-              <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <ProtectedRoute isAuthenticated={isAuthenticated} authReady={authReady}>
                 <ChatPage />
               </ProtectedRoute>
             }
@@ -93,7 +119,7 @@ function App() {
           <Route
             path="/profile"
             element={
-              <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <ProtectedRoute isAuthenticated={isAuthenticated} authReady={authReady}>
                 <ProfilePage />
               </ProtectedRoute>
             }
@@ -101,7 +127,7 @@ function App() {
           <Route
             path="/settings"
             element={
-              <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <ProtectedRoute isAuthenticated={isAuthenticated} authReady={authReady}>
                 <SettingsPage />
               </ProtectedRoute>
             }
@@ -109,7 +135,7 @@ function App() {
           <Route
             path="/user/:userId"
             element={
-              <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <ProtectedRoute isAuthenticated={isAuthenticated} authReady={authReady}>
                 <UserProfilePage />
               </ProtectedRoute>
             }
