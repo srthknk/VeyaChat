@@ -5,6 +5,7 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 const client = axios.create({
   baseURL: API_URL,
+  withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -12,13 +13,7 @@ const client = axios.create({
 
 // Add token to headers
 client.interceptors.request.use((config) => {
-  let storedToken = null;
-  try {
-    storedToken = localStorage.getItem('token');
-  } catch (error) {
-    console.warn('Persistent browser storage is unavailable; using the active session:', error);
-  }
-  const token = storedToken || useAuthStore.getState().token;
+  const token = useAuthStore.getState().token;
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }

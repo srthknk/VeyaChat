@@ -60,6 +60,6 @@ export const useAuth = () => {
     register,
     login,
     logout: handleLogout,
-    isAuthenticated: !!token,
+    isAuthenticated: !!token || !!user,
   };
 };

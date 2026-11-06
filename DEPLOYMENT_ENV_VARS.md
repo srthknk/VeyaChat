@@ -63,6 +63,10 @@ Add the following:
 | `JWT_EXPIRE` | `365d` |
 | `MESSAGE_ENCRYPTION_KEY` | A new long random secret |
 
+Authentication persists through the backend's `HttpOnly` `veya_session` cookie.
+Set `CLIENT_URL` and `CLIENT_URL_MOBILE` to the exact deployed Vercel origin,
+including `https://`, so credentialed cookies are accepted.
+
 Render provides a `PORT` value automatically. If Render recommends its
 provided port, use that value or remove the manually added `PORT` variable.
 The application defaults to port `5000` when running locally.

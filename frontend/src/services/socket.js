@@ -14,6 +14,7 @@ export const connectSocket = (token) => {
 
   socket = io(SOCKET_URL, {
     auth: { token },
+    withCredentials: true,
     reconnection: true,
     reconnectionDelay: 1000,
     reconnectionDelayMax: 5000,

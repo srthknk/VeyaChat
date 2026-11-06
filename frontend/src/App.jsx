@@ -22,7 +22,6 @@ import LocationConsent from './components/LocationConsent.jsx';
 import GoogleRegisterPage from './pages/GoogleRegisterPage.jsx';
 import PrivacyPage from './pages/PrivacyPage.jsx';
 import OfflineNotice from './components/OfflineNotice.jsx';
-import { readPersistedToken } from './services/authStorage.js';
 
 const queryClient = new QueryClient();
 
@@ -56,30 +55,13 @@ function App() {
   useEffect(() => {
     let active = true;
     const restoreSession = async () => {
-      let restoredToken = token;
-      if (!restoredToken) {
-        try {
-          restoredToken = await readPersistedToken();
-          if (restoredToken && active) {
-            useAuthStore.getState().setToken(restoredToken);
-          }
-        } catch (error) {
-          console.error('Failed to read the persisted Veya session:', error);
-        }
-      }
-
-      if (!restoredToken) {
-        if (active) setAuthReady(true);
-        return;
-      }
-
       authService.getMe()
       .then((response) => {
         if (active) setUser(response.data.data.user);
       })
       .catch((error) => {
         console.error('Failed to restore user:', error);
-        if (active && error.response?.status === 401) {
+        if (active && error.response?.status === 401 && token) {
           useAuthStore.getState().logout();
         }
       })
@@ -92,7 +74,7 @@ function App() {
     return () => {
       active = false;
     };
-  }, [token, setUser, setAuthReady]);
+  }, [setUser, setAuthReady]);
 
   if (!authReady) {
     return <AuthLoadingScreen />;

@@ -1,11 +1,13 @@
 import AuthService from '../services/authService.js';
 import UserService from '../services/userService.js';
+import { clearAuthCookie, setAuthCookie } from '../utils/authCookie.js';
 
 export const register = async (req, res, next) => {
   try {
     const { username, mobile, password, firstName, lastName, bio, profilePicture } = req.body;
 
     const { user, token } = await AuthService.register(username, mobile, password, firstName, lastName, bio, profilePicture);
+    setAuthCookie(res, token);
 
     res.status(201).json({
       success: true,
@@ -26,6 +28,7 @@ export const login = async (req, res, next) => {
     const usernameOrMobile = identifier || username || mobile;
 
     const { user, token } = await AuthService.login(usernameOrMobile, password);
+    setAuthCookie(res, token);
 
     res.status(200).json({
       success: true,
@@ -44,6 +47,7 @@ export const googleLogin = async (req, res, next) => {
   try {
     const { credential } = req.body;
     const { user, token } = await AuthService.loginWithGoogle(credential);
+    setAuthCookie(res, token);
     res.status(200).json({ success: true, message: 'Google login successful', data: { user: user.toJSON(), token } });
   } catch (error) {
     next(error);
@@ -69,6 +73,7 @@ export const googleRegister = async (req, res, next) => {
       lastName,
       bio,
     });
+    setAuthCookie(res, token);
     res.status(201).json({ success: true, message: 'Google account registered successfully', data: { user: user.toJSON(), token } });
   } catch (error) {
     next(error);
@@ -77,7 +82,7 @@ export const googleRegister = async (req, res, next) => {
 
 export const logout = async (req, res, next) => {
   try {
-    // Logout is handled on frontend (token removal)
+    clearAuthCookie(res);
     res.status(200).json({
       success: true,
       message: 'Logged out successfully',

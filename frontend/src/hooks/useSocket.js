@@ -13,8 +13,6 @@ export const useSocket = (token, currentUser) => {
     normalizePhone(currentUser?.mobile) === normalizePhone('+919322305058');
 
   useEffect(() => {
-    if (!token) return;
-
     socketRef.current = connectSocket(token);
     const socket = socketRef.current;
 

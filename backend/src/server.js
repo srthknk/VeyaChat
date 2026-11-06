@@ -11,6 +11,7 @@ import connectDB from './config/database.js';
 import { errorHandler, notFoundHandler } from './middlewares/errorHandler.js';
 import { verifyToken, attachUserIdIfExists } from './middlewares/authMiddleware.js';
 import setupSocketHandlers from './sockets/socketHandlers.js';
+import { getAuthCookie } from './utils/authCookie.js';
 
 // Routes
 import authRoutes from './routes/authRoutes.js';
@@ -58,7 +59,7 @@ app.use(express.urlencoded({ limit: '30mb', extended: true }));
 
 // Socket.IO middleware - verify token
 io.use((socket, next) => {
-  const token = socket.handshake.auth.token;
+  const token = socket.handshake.auth.token || getAuthCookie({ headers: socket.handshake.headers });
   if (!token) {
     return next(new Error('Missing authentication token'));
   }

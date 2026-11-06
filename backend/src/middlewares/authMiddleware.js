@@ -1,8 +1,9 @@
 import jwt from 'jsonwebtoken';
+import { getAuthCookie } from '../utils/authCookie.js';
 
 export const verifyToken = (req, res, next) => {
   try {
-    const token = req.headers.authorization?.split(' ')[1];
+    const token = req.headers.authorization?.split(' ')[1] || getAuthCookie(req);
 
     if (!token) {
       return res.status(401).json({
@@ -30,7 +31,7 @@ export const verifyToken = (req, res, next) => {
 
 export const attachUserIdIfExists = (req, res, next) => {
   try {
-    const token = req.headers.authorization?.split(' ')[1];
+    const token = req.headers.authorization?.split(' ')[1] || getAuthCookie(req);
     if (token) {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       req.userId = decoded.userId;
