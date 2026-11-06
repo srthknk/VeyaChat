@@ -74,7 +74,7 @@ function App() {
     return () => {
       active = false;
     };
-  }, [setUser, setAuthReady]);
+  }, []);
 
   if (!authReady) {
     return <AuthLoadingScreen />;

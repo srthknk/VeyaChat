@@ -24,7 +24,9 @@ client.interceptors.request.use((config) => {
 client.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    const requestUrl = error.config?.url || '';
+    const isSessionProbe = requestUrl === '/api/auth/me' || requestUrl.endsWith('/api/auth/me');
+    if (error.response?.status === 401 && !isSessionProbe) {
       useAuthStore.getState().logout();
       window.location.href = '/login';
     }
